@@ -1,6 +1,6 @@
 autopep8==1.6.0
-boto3==1.20.34
-botocore==1.23.34
+boto3==1.20.44
+botocore==1.23.44
 dj-database-url==0.5.0
 Django==4.0.1
 django-widget-tweaks==1.4.9
@@ -34,9 +34,10 @@ Markdown==3.3.6
 MarkupSafe==2.0.1
 djangorestframework-simplejwt==5.0.0
 drf-spectacular==0.21.1
-django-prometheus==2.2.0
 Faker==11.3.0
 selenium==4.1.0
 django-health-check==3.16.5
 psutil==5.9.0
 django-debug-toolbar==3.2.4
+pytest==6.2.5
+

@@ -70,14 +70,11 @@ INSTALLED_APPS = [
     'health_check.contrib.redis',
     'debug_toolbar',
     'drf_spectacular',
-    'django_prometheus',
     'user',
     'chat',
-    'jet',
 ]
 
 MIDDLEWARE = [
-    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -88,7 +85,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -351,7 +347,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API Doc',
     'VERSION': '1.0.0',
     'LICENCE': {'name': 'BSD License'},
-    'CONTACT': {'name': 'Daniel Ale', 'email': 'daniel.ale@prunedge.com'},
+    'CONTACT': {'name': 'Ismail Ibrahim', 'email': 'ibraismail1990@gmail.com'},
 
     # Oauth2 related settings. used for example by django-oauth2-toolkit.
     # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#oauth-flows-object

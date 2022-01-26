@@ -24,7 +24,6 @@ urlpatterns = [
     path('api/v1/api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
     path('ht/', include('health_check.urls')),
-    path('prometheus/', include('django_prometheus.urls'), name="django-prometheus"),
     path('__debug__/', include('debug_toolbar.urls')),
     path('api/v1/auth/', include('user.urls')),
     path('chat/', include('chat.urls')),

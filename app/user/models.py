@@ -15,7 +15,6 @@ from django.contrib.postgres.fields import ArrayField
 from .managers import CustomUserManager
 from django.core.exceptions import ValidationError
 from django.utils.crypto import get_random_string
-from django_prometheus.models import ExportModelOperationsMixin
 
 
 USER_ROLE = (
@@ -39,7 +38,7 @@ def default_role():
     return ['REGULAR']
 
 
-class User(ExportModelOperationsMixin('user'), AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         _('email address'), null=True, blank=True, unique=True)
