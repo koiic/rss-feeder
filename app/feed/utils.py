@@ -17,7 +17,7 @@ def scrape_feed_info(feed_url):
             "description": soup.description.text,
             "link": soup.link.text,
             "ttl": soup.ttl.text,
-            "last_build_date": datetime.strptime(soup.lastBuildDate.text, '%a, %d %b %Y %H:%M:%S %z')
+            "last_build_date": parser.parse(soup.lastBuildDate.text)
         }
         return feed
     except Exception as e:
@@ -42,7 +42,7 @@ def scrape_feed_items(feed_url):
                 author=item.find("author").text,
                 category=item.find("category").text,
                 guid=item.find("guid").text,
-                published_at=datetime.strptime(item.find("pub_date").text, '%a, %d, %b, %Y %H:%M:%S %z'),
+                published_at=parser.parse(soup.pubDate.text),
                 comments_url=item.find("comments_url").text
             )
             item_list.append(new_item)
@@ -57,9 +57,6 @@ def scrape_feed(feed_url):
         # start the scraping tool
         r = requests.get(feed_url)
         soup = BeautifulSoup(r.content, features='xml')
-
-        print(parser.parse(soup.lastBuildDate.text), "====<><>")
-
         # get feed information
         feed = {
             "title": soup.title.text,
@@ -87,7 +84,7 @@ def convert_to_dict(item):
                 author=item.find("author").text if item.find("author") else None,
                 category=item.find("category").text if item.find("category") else None,
                 guid=item.find("guid").text if item.find("guid") else None,
-                published_at=parser.parse(item.pubDate.text)if item.find("pubDate") else None,
+                published_at=parser.parse(item.pubDate.text) if item.find("pubDate") else None,
                 comments_url=item.find("comments_url").text if item.find("comments_url") else None
             )
     return new_item
