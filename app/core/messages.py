@@ -37,7 +37,7 @@ messages = {
     'OK': "{} created successfully",
     'REGISTERED': "{} registered successfully",
     'FOLLOWED': "you have successfully followed this feed",
-    'FOLLOWING': "you are already following this  feed",
+    'FOLLOWING': "you are already following this feed",
     'UNFOLLOWED': "you have successfully unfollowed this feed",
     'DELETED': '{} deleted successfully',
     'UPDATED': '{} updated successfully',

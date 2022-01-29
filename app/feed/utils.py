@@ -2,7 +2,7 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-
+from dateutil import parser
 
 def scrape_feed_info(feed_url):
     # get information about a feed
@@ -10,8 +10,8 @@ def scrape_feed_info(feed_url):
         # start the scraping tool
         r = requests.get(feed_url)
         soup = BeautifulSoup(r.content, features='xml')
-        print(soup.title)
         # get feed information
+        print(parser.parse(soup.lastBuildDate.text), "====<><>")
         feed = {
             "title": soup.title.text,
             "description": soup.description.text,
@@ -58,15 +58,15 @@ def scrape_feed(feed_url):
         r = requests.get(feed_url)
         soup = BeautifulSoup(r.content, features='xml')
 
-        # print(soup.channel)
+        print(parser.parse(soup.lastBuildDate.text), "====<><>")
 
         # get feed information
         feed = {
             "title": soup.title.text,
             "description": soup.description.text,
             "link": soup.link.text,
-            "ttl": soup.ttl.text,
-            "last_build_date": datetime.strptime(soup.lastBuildDate.text, '%a, %d %b %Y %H:%M:%S %z')
+            "ttl": soup.ttl.text if soup.find("ttl") else None,
+            "last_build_date": parser.parse(soup.lastBuildDate.text)
         }
         # get items in feed
         items = soup.findAll("item")
@@ -87,7 +87,7 @@ def convert_to_dict(item):
                 author=item.find("author").text if item.find("author") else None,
                 category=item.find("category").text if item.find("category") else None,
                 guid=item.find("guid").text if item.find("guid") else None,
-                published_at=datetime.strptime(item.find("pubDate").text, '%a, %d %b %Y %H:%M:%S %z') if item.find("pubDate") else None,
+                published_at=parser.parse(item.pubDate.text)if item.find("pubDate") else None,
                 comments_url=item.find("comments_url").text if item.find("comments_url") else None
             )
     return new_item

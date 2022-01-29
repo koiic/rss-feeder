@@ -22,7 +22,7 @@ class Feed(Base):
     registered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                       related_name="feed_owners")
     last_build_date = models.DateTimeField()
-    ttl = models.IntegerField()
+    ttl = models.IntegerField(null=True)
     name = models.CharField(max_length=50, unique=True, null=True)
 
     class Meta:
@@ -60,6 +60,19 @@ class Followers(Base):
 
     def __str__(self):
         return f'{self.feed.title} - {self.user.firstname}'
+
+
+class Read(Base):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+                             related_name="user_reads")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="item_reads")
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f'{self.item.title} - {self.user.firstname}'
 
 
 class Activity(Base):

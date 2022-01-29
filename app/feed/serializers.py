@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from feed.models import Feed, Item, Followers
+from user.serializers import ListUserSerializer, UserFollowerSerializer
 
 
 class FeedSerializer(serializers.ModelSerializer):
@@ -29,9 +30,11 @@ class ItemSerializer(serializers.ModelSerializer):
 
 
 class FollowerSerializer(serializers.ModelSerializer):
+    user = UserFollowerSerializer(read_only=True)
+
     class Meta:
         model = Followers
-        field = "__all__"
+        exclude = ('feed',)
 
 
 
