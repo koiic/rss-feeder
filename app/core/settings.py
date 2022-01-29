@@ -313,10 +313,10 @@ CHANNEL_LAYERS = {
 # REDIS_DEFAULT_CONNECTION_POOL = redis.ConnectionPool.from_url(REDIS_URL)
 
 CELERY_BEAT_SCHEDULE = {
-    # "sample_task": {
-    #     "task": "user.tasks.sample_task",
-    #     "schedule": crontab(minute="*/1"),
-    # },
+    "fetch_feeds_update": {
+        "task": "feed.tasks.scrape_new_feed",
+        "schedule": crontab(minute="*/20"),
+    },
     # "send_email_report": {
     #     "task": "user.tasks.send_email_report",
     #     "schedule": crontab(hour="*/1"),
