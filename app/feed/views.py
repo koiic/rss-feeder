@@ -14,7 +14,7 @@ from core.pagination import CustomPagination
 from feed.filters import FeedFilters, ItemFilters
 from feed.models import Feed, Item, Followers, Activity, Read
 from feed.serializers import FeedSerializer, ItemSerializer, FollowerSerializer
-from feed.utils import scrape_feed
+from feed.utils import scrape_feed, ping_for_feed
 
 pagination = CustomPagination()
 
@@ -48,6 +48,7 @@ class FeedViewsets(viewsets.ModelViewSet):
             feed_, items = scrape_feed(request.data['link'])
             feed_['registered_by'] = request.user
             feed_['name'] = request.data['name']
+            feed_['link'] = request.data['link']
             feed = serializer.create(validated_data=feed_)
             # save items
             item_serializer = ItemSerializer(data=items, many=True)
@@ -59,8 +60,13 @@ class FeedViewsets(viewsets.ModelViewSet):
             capture_exception(e)
             return Response({'success': False, 'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(methods=['GET'], detail=False, permission_classes=[IsAuthenticated])
-    def me(self, request, pk=None):
+    @action(methods=['GET'], detail=True, permission_classes=[IsAuthenticated], serializer_class=None)
+    def ping(self, request, pk=None):
+        feed = self.get_object()
+        return self.get_feed_items_update(feed)
+
+    @action(methods=['GET'], detail=False, permission_classes=[IsAuthenticated], url_path="me")
+    def get_logged_user_feeds(self, request, pk=None):
         queryset = self.get_queryset().filter(registered_by=request.user)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -174,3 +180,22 @@ class FeedViewsets(viewsets.ModelViewSet):
             )
             item_list.append(item)
         return Item.objects.bulk_create(item_list, batch_size)
+
+    @staticmethod
+    def get_feed_items_update(feed):
+        try:
+            feed_, items, updated = ping_for_feed(feed)
+            if updated:
+                feed.last_build_date = feed_.get('last_build_date')
+                feed.save(update_fields=['last_build_date'])
+                for item in items:
+                    guid = item.pop('guid')
+                    Item.objects.get_or_create(guid=guid, feed=feed, defaults=item)
+                return Response({'success': True, 'message': messages['UPDATED'].format('Feed')},
+                                status=status.HTTP_200_OK)
+            else:
+                return Response({'success': True, 'message': messages['NO_DATA_FOUND']},
+                                status=status.HTTP_200_OK)
+        except Exception as e:
+            capture_exception(e)
+            return Response({'success': False, 'message': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR)

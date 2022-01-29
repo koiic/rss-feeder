@@ -26,11 +26,11 @@ class Feed(Base):
     name = models.CharField(max_length=50, unique=True, null=True)
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('-last_build_date',)
         unique_together = ('name', 'registered_by')
 
     def __str__(self):
-        return f'{self.title}'
+        return f'{self.name}'
 
 
 class Item(Base):
@@ -45,7 +45,7 @@ class Item(Base):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE, related_name="feed_items")
 
     class Meta:
-        ordering = ('-created_at',)
+        ordering = ('-published_at',)
 
     def __str__(self):
         return f'{self.feed.name} - {self.title}'
