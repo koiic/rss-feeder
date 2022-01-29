@@ -18,16 +18,16 @@ class Base(models.Model):
 class Feed(Base):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
+    link = models.URLField()
     registered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
                                       related_name="feed_owners")
-    published_at = models.DateTimeField()
     last_build_date = models.DateTimeField()
-    ttl = models.IntegerField()
-    slug = models.URLField(null=True, blank=True)
+    ttl = models.IntegerField(null=True)
+    name = models.CharField(max_length=50, unique=True, null=True)
 
     class Meta:
         ordering = ('-created_at',)
+        unique_together = ('name', 'registered_by')
 
     def __str__(self):
         return f'{self.title}'
@@ -48,7 +48,7 @@ class Item(Base):
         ordering = ('-created_at',)
 
     def __str__(self):
-        return f'{self.feed.title} - {self.title}'
+        return f'{self.feed.name} - {self.title}'
 
 
 class Followers(Base):
@@ -60,6 +60,19 @@ class Followers(Base):
 
     def __str__(self):
         return f'{self.feed.title} - {self.user.firstname}'
+
+
+class Read(Base):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True,
+                             related_name="user_reads")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="item_reads")
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f'{self.item.title} - {self.user.firstname}'
 
 
 class Activity(Base):
