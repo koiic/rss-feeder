@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'user',
     'chat',
+    'feed',
 ]
 
 MIDDLEWARE = [
@@ -268,10 +269,12 @@ CLIENT_URL = os.environ.get('CLIENT_URL')
 
 
 TOKEN_LIFESPAN = 24  # hours
-REDIS_URL = "redis://{host}:{port}/1".format(
-    host=os.getenv('REDIS_HOST', 'localhost'),
-    port=os.getenv('REDIS_PORT', '6379')
-)
+# REDIS_URL = "redis://{host}:{port}/1".format(
+#     host=os.getenv('REDIS_HOST', 'localhost'),
+#     port=os.getenv('REDIS_PORT', '6379')
+# )
+
+REDIS_URL = os.getenv('REDIS_URL', "redis://redis:6379")
 
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL

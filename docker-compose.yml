@@ -28,8 +28,8 @@ services:
 
   redis:
     image: bitnami/redis:latest
-    environment:
-      - REDIS_PASSWORD=Admin!123
+    env_file:
+      - ./.env
     ports:
       - "6379:6379"
 
