@@ -39,10 +39,16 @@
               color: #57697e;
             "
           >
-            Hello <strong> {{ fullname }}</strong>, <br /><br />
-            Welcome to RSSFEED<br />
-            Kindly follow the link below to verify your account. Note that it is
-            only valid for 24 hours<br />
+            Hey <strong> {{ fullname }}</strong>, <br /><br />
+
+            I hope everything is going well with you and that you've had a great year navigating your product.<br />
+
+            I noticed that your feed - {{ title }} is returning an exception when it tries to update. <br />
+              Are you interested in forcing the update manually? please click the link below to ping the feed
+
+            Thank for using this service.
+
+            Cheers,
           </span>
         </font>
       </div>
@@ -67,7 +73,7 @@
             "
           >
             <a
-              href="{{url}}"
+              href="{{link}}"
               style="
                 background-color: #6873ef;
                 padding: 12px 32px;
@@ -77,7 +83,7 @@
                 text-decoration: none;
               "
             >
-              Verify Email</a
+              Ping feed</a
             >
           </span>
         </font>

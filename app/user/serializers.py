@@ -1,17 +1,13 @@
-from django.contrib.auth import get_user_model, authenticate
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.utils.translation import gettext_lazy as _
-from rest_framework import serializers, exceptions
-from django.utils.crypto import get_random_string
-from django.db import IntegrityError
-from django.db.models import Q
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
-from datetime import date, datetime
-from dateutil.relativedelta import relativedelta
+from django.contrib.auth import get_user_model, authenticate
+from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 from email_validator import validate_email, EmailNotValidError
+from rest_framework import serializers, exceptions
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 from .models import Token, User
-from .tasks import send_new_user_email, send_password_reset_email
+from .tasks import send_new_user_email
 
 
 class ListUserSerializer(serializers.ModelSerializer):
@@ -113,19 +109,3 @@ class AuthTokenSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code='authentication')
         attrs['user'] = user
         return attrs
-
-
-class VerifyTokenSerializer(serializers.Serializer):
-    """Serializer for token verification"""
-    token = serializers.CharField(required=True)
-
-
-class InitializePasswordResetSerializer(serializers.Serializer):
-    """Serializer for sending password reset email to the user"""
-    email = serializers.CharField(required=True)
-
-
-class CreatePasswordSerializer(serializers.Serializer):
-    """Serializer for password change on reset"""
-    token = serializers.CharField(required=True)
-    password = serializers.CharField(required=True)

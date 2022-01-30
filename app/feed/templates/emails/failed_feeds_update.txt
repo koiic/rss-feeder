@@ -1,0 +1,7 @@
+
+I hope everything is going well with you and that you've had a great year navigating your product.<br />
+
+I noticed that your feed - {{ title }} is returning an exception when it tries to update. <br />
+  Are you interested in forcing the update manually? please click the link below to ping the feed
+
+Thank for using tihs service.

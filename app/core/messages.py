@@ -12,7 +12,7 @@ messages = {
     'INVALID_CREDENTIALS': 'Invalid credentials!',
     'EMAIL_ALREADY_EXISTS': 'Email already exists.',
     'BAD_REQUEST': 'Bad request.',
-    'NO_DATA_FOUND': 'No data found.',
+    'NO_DATA_FOUND': 'No new feeds.',
     'NOT_FOUND': '{} not found.',
     'DOES_NOT_EXIST': '{} does not exist',
     'ALREADY_EXISTS': '{} already exists.',
