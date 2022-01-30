@@ -94,7 +94,7 @@ IMPORT_EXPORT_USE_TRANSACTIONS = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -315,7 +315,7 @@ CHANNEL_LAYERS = {
 CELERY_BEAT_SCHEDULE = {
     "fetch_feeds_update": {
         "task": "feed.tasks.scrape_new_feed",
-        "schedule": crontab(minute="*/20"),
+        "schedule": crontab(minute="*/30"),
     },
     # "send_email_report": {
     #     "task": "user.tasks.send_email_report",
@@ -372,10 +372,3 @@ if DEBUG == 0:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True
     )
-    
-
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
-
-# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-

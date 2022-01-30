@@ -5,9 +5,9 @@ from django.core.files import File
 from urllib.request import urlretrieve
 
 
-def send_email(subject, email_from, html_alternative, text_alternative):
+def send_email(subject, email_to, html_alternative, text_alternative):
     msg = EmailMultiAlternatives(
-        subject, text_alternative, settings.EMAIL_FROM, [email_from])
+        subject, text_alternative, settings.EMAIL_FROM, [email_to])
     msg.attach_alternative(html_alternative, "text/html")
     msg.send(fail_silently=False)
 

@@ -14,13 +14,12 @@ from core.pagination import CustomPagination
 from feed.filters import FeedFilters, ItemFilters
 from feed.models import Feed, Item, Followers, Activity, Read
 from feed.serializers import FeedSerializer, ItemSerializer, FollowerSerializer
-from feed.utils import scrape_feed, ping_for_feed
+from feed.utils import scrape_feed, ping_for_feed, update_new_feed
 
 pagination = CustomPagination()
 
 
 class FeedViewsets(viewsets.ModelViewSet):
-    """Feed view sets"""
     queryset = Feed.objects.all()
     serializer_class = FeedSerializer
     permission_classes = [IsAuthenticated]
@@ -41,19 +40,30 @@ class FeedViewsets(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
+        """
+        override default create on viewset
+        register a new feed and scrape the feed items
+        Args:
+            request ():  reuest object
+            *args (): any
+            **kwargs (): any
+
+        Returns:
+            Response (): a http response object
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # scrape feed info
         try:
-            feed_, items = scrape_feed(request.data['link'])
+            feed_, items = scrape_feed(request.data['link'])  # scrape the feed and items
             feed_['registered_by'] = request.user
             feed_['name'] = request.data['name']
             feed_['link'] = request.data['link']
-            feed = serializer.create(validated_data=feed_)
-            # save items
+            feed = serializer.create(validated_data=feed_)  # save the feed object
+
             item_serializer = ItemSerializer(data=items, many=True)
             item_serializer.is_valid(raise_exception=True)
-            self.add_bulk_items(item_serializer.validated_data, feed)
+            self.add_bulk_items(item_serializer.validated_data, feed)  # bulk create the items
             return Response({'success': True, 'message': messages['OK'].format('Feed')},
                             status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -62,6 +72,15 @@ class FeedViewsets(viewsets.ModelViewSet):
 
     @action(methods=['GET'], detail=True, permission_classes=[IsAuthenticated], serializer_class=None)
     def ping(self, request, pk=None):
+        """
+        An endpoint to update feeds: persist the feed items if there are new updates on the rss feed
+        Args:
+            request (): request object
+            pk (): The feed primary key
+
+        Returns:
+            Response (): an http response object
+        """
         feed = self.get_object()
         return self.get_feed_items_update(feed)
 
@@ -78,15 +97,24 @@ class FeedViewsets(viewsets.ModelViewSet):
 
     @action(methods=['GET'], detail=True, serializer_class=ItemSerializer, permission_classes=[IsAuthenticated])
     def items(self, request, pk=None):
+        """
+        fetch items for a single feed using the feed Id
+        Args:
+            request (): request object
+            pk (): feed unique Id
+
+        Returns:
+            PaginatedResponse (): a paginated response of the items
+        """
         feed = self.get_object()
         queryset = Item.objects.filter(feed=feed)
-        read_param = request.GET.get('read', None)
+        read_param = request.GET.get('read', None)  # check if there is query params
         if read_param is not None:
-            read_items = Read.objects.values_list("item__id")
+            read_items = Read.objects.values_list("item__id")  # get item id of all read items
             if read_param.lower() == "true":
-                queryset = queryset.filter(id__in=read_items)
+                queryset = queryset.filter(id__in=read_items)  # filter items by the already read items id
             elif read_param.lower() == "false":
-                queryset = queryset.filter(~Q(id__in=read_items))
+                queryset = queryset.filter(~Q(id__in=read_items))  # filter items by the unread items id
         paginated_data = pagination.paginate_queryset(queryset, request)
         serializer = self.get_serializer(paginated_data, many=True)
         return pagination.get_paginated_response(serializer.data)
@@ -94,6 +122,13 @@ class FeedViewsets(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=False, serializer_class=ItemSerializer, permission_classes=[IsAuthenticated],
             url_path='items')
     def fetch_all_items(self, request):
+        """
+                fetch all  items
+                Args:
+                    request (): request object
+                Returns:
+                    PaginatedResponse (): a paginated response of the items
+                """
         queryset = Item.objects.filter()
         read_param = request.GET.get('read', None)
         if read_param is not None:
@@ -109,22 +144,41 @@ class FeedViewsets(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=False, serializer_class=ItemSerializer,
             url_path='items/(?P<item_id>[^/.]+)')
     def item(self, request, item_id):
+        """
+        Fetch a single item using the item ID
+        mark item as read
+        Args:
+            request (): Request  Object
+            item_id (): the item UUID to update
+
+        Returns:
+            Response(): the httpResponse object
+        """
         item = Item.objects.filter(pk=item_id).first()
         if item is None:
             return Response({'success': False, 'errors': messages['NOT_FOUND'].format('Item')},
                             status=status.HTTP_404_NOT_FOUND)
         # mark item as read
         if Read.objects.filter(item=item, user=request.user).exists():
-            Read.objects.update_or_create(item=item, user=request.user, defaults={'count': F('count') + 1})
+            Read.objects.update(count=F('count') + 1)  # update the read count of an existing read items for a user
         else:
             Read.objects.create(item=item, user=request.user, count=1)
         # return item
         serializer = self.get_serializer(item)
         return Response({'success': True, 'data': serializer.data}, status=status.HTTP_200_OK)
 
-    @action(methods=['GET', 'POST'], detail=True, serializer_class=FollowerSerializer,
+    @action(methods=['GET'], detail=True, serializer_class=FollowerSerializer,
             permission_classes=[IsAuthenticated])
-    def follow(self, request, pk=None):
+    def followers(self, request, pk=None):
+        """
+        GET endpoint to get the list of followers for a single feed
+        Args:
+            request (): request object
+            pk (): unique feed id
+
+        Returns:
+            Response(): a http response object
+        """
         feed = self.get_object()
         try:
             if self.request.method == 'GET':
@@ -135,13 +189,30 @@ class FeedViewsets(viewsets.ModelViewSet):
                     'followers': serializer.data
                 }
                 return Response({'success': True, 'data': data})
-            elif self.request.method == 'POST':
-                obj, created = Followers.objects.get_or_create(user=request.user, feed=feed)
-                if created:
-                    return Response({'success': True, 'message': messages['FOLLOWED']},
-                                    status=status.HTTP_200_OK)
-                return Response({'success': True, 'message': messages['FOLLOWING']},
+        except Exception as e:
+            capture_exception(e)
+            return Response({'success': False, 'errors': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(methods=['POST'], detail=True, serializer_class=FollowerSerializer,
+            permission_classes=[IsAuthenticated])
+    def follow(self, request, pk=None):
+        """
+           POST endpoint to follow a single feed
+           Args:
+               request (): request object
+               pk (): unique feed id
+
+           Returns:
+               Response(): a http response object
+        """
+        feed = self.get_object()
+        try:
+            obj, created = Followers.objects.get_or_create(user=request.user, feed=feed)
+            if created:
+                return Response({'success': True, 'message': messages['FOLLOWED']},
                                 status=status.HTTP_200_OK)
+            return Response({'success': True, 'message': messages['FOLLOWING']},
+                            status=status.HTTP_200_OK)
         except Exception as e:
             capture_exception(e)
             return Response({'success': False, 'errors': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -149,6 +220,15 @@ class FeedViewsets(viewsets.ModelViewSet):
     @action(methods=['POST'], detail=True, serializer_class=None,
             permission_classes=[IsAuthenticated])
     def unfollow(self, request, pk=None):
+        """
+          POST endpoint to unfollow a single feed
+          Args:
+              request (): request object
+              pk (): unique feed id
+
+          Returns:
+              Response(): a http response object
+        """
         feed = self.get_object()
         try:
             obj = Followers.objects.filter(user=request.user, feed=feed).first()
@@ -164,6 +244,15 @@ class FeedViewsets(viewsets.ModelViewSet):
 
     @staticmethod
     def add_bulk_items(payload, feed):
+        """
+        method to bulk create items
+        Args:
+            payload (): Items list
+            feed (): the feed instance that own to the items
+
+        Returns:
+            list of item instances
+        """
         item_list = []
         batch_size = 20
         for data in payload:
@@ -183,14 +272,18 @@ class FeedViewsets(viewsets.ModelViewSet):
 
     @staticmethod
     def get_feed_items_update(feed):
+        """
+        method to fetch updates for a feed
+        Args:
+            feed (): the feed object to fetch updates
+
+        Returns:
+            Response(): http response object
+        """
         try:
             feed_, items, updated = ping_for_feed(feed)
             if updated:
-                feed.last_build_date = feed_.get('last_build_date')
-                feed.save(update_fields=['last_build_date'])
-                for item in items:
-                    guid = item.pop('guid')
-                    Item.objects.get_or_create(guid=guid, feed=feed, defaults=item)
+                update_new_feed(feed, feed_, items)
                 return Response({'success': True, 'message': messages['UPDATED'].format('Feed')},
                                 status=status.HTTP_200_OK)
             else:

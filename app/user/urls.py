@@ -12,7 +12,7 @@ router.register('users', AuthViewsets)
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', CustomObtainTokenPairView.as_view(), name='login'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='refresh-token'),
-    path('token/verify/', TokenVerifyView.as_view(), name='verify-token'),
-    path('token/', CreateTokenView.as_view(), name='tokens'),
+    # path('token/refresh/', TokenRefreshView.as_view(), name='refresh-token'),
+    # path('token/verify/', TokenVerifyView.as_view(), name='verify-token'),
+    # path('token/', CreateTokenView.as_view(), name='tokens'),
 ]

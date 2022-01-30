@@ -17,7 +17,7 @@
               color: #161531;
             "
           >
-            <h5 style="margin: 20px auto">Welcome to GloEPID</h5>
+            <h5 style="margin: 20px auto">Welcome to RSSFEED</h5>
           </span>
         </font>
       </div>
@@ -39,14 +39,16 @@
               color: #57697e;
             "
           >
-            Hello <strong> {{ fullname }}</strong>, <br /><br />
-            Kindly find the status of your test below!<br />
-            <ul>
-              <li>Name: {{fullname}}</li>
-              <li>Laboratory: {{laboratory}}</li>
-              <li>Test Date: {{test_date}}</li>
-              <li>Status: {{status}}</li>
-            </ul>
+            Hey <strong> {{ fullname }}</strong>, <br /><br />
+
+            I hope everything is going well with you and that you've had a great year navigating your product.<br />
+
+            I noticed that your feed - {{ title }} is returning an exception when it tries to update. <br />
+              Are you interested in forcing the update manually? please click the link below to ping the feed
+
+            Thank for using this service.
+
+            Cheers,
           </span>
         </font>
       </div>
@@ -71,7 +73,7 @@
             "
           >
             <a
-              href="{{fullname}}"
+              href="{{link}}"
               style="
                 background-color: #6873ef;
                 padding: 12px 32px;
@@ -81,7 +83,7 @@
                 text-decoration: none;
               "
             >
-              Verify Email</a
+              Ping feed</a
             >
           </span>
         </font>
