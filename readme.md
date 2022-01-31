@@ -84,6 +84,7 @@ ___
 * ##### [Python](https://www.python.org/)  - Python is a programming language that lets you work quickly and integrate systems more effectively
 * ##### [Django Rest Framework](https://www.django-rest-framework.org/) - Django REST framework is a powerful and flexible toolkit for building Web APIs.
 * ##### [Django](https://www.djangoproject.com/) -  Django makes it easier to build better web apps more quickly and with less code.
+* ##### [Postgres](https://www.postgresql.org/) -  PostgreSQL is a powerful, open source object-relational database system.
 * ##### [BeautifulSoup](https://beautiful-soup-4.readthedocs.io/en/latest/) -  Python library for pulling data out of HTML and XML files.
 * ##### [Celery](https://docs.celeryproject.org/en/stable/getting-started/index.html) -  A task queue with focus on real-time processing, while also supporting task scheduling.
 * ##### [Redis](https://redis.io/) -  Redis is an in-memory data structure store, used as a distributed, cache and message broker
