@@ -31,8 +31,6 @@ class TestFeedEndpoints:
         client.force_authenticate(user=user)
         response = client.post(url, valid_serializer_data, format='json')
 
-        print(response.data, ":_____:")
-
         assert response.status_code == 201
         assert response.data['success'] is True
         assert response.data['message'] == messages['OK'].format('Feed')

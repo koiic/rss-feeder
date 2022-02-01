@@ -1,4 +1,3 @@
-from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,14 +19,12 @@ def scrape_feed(feed_url):
         tuple(feed, items): a tuple of feed and list of items
     """
     item_list = []
-    print(feed_url, "::____::")
     try:
         # start the scraping tool
 
         r = requests.get(feed_url)
 
         soup = BeautifulSoup(r.content, features='xml')
-        print(soup, "::____::")
 
         # get feed information
         feed = {
@@ -44,7 +41,6 @@ def scrape_feed(feed_url):
             item_list.append(convert_to_dict(item))
         return feed, item_list
     except Exception as e:
-        print(e, "====")
         raise Exception(str(e))
 
 
@@ -81,7 +77,6 @@ def ping_for_feed(feed):
         tuple(dictionary, list, bool): the feed object, the items list and the updated status
 
     """
-    print("i entered ping for feed")
     feed_, items = scrape_feed(feed.link)
     if feed_.get('last_build_date') > feed.last_build_date:
         return feed_, items, True

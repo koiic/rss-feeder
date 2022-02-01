@@ -251,14 +251,13 @@ LOGGING = {
 }
 
 # Email Settings
-# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
 EMAIL_FROM = os.environ.get('SENDER_EMAIL')
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.sendgrid.net')
-EMAIL_HOST_USER = os.environ.get('SMTP_UER', 'smtp.sendgrid.net')  # this is exactly the value 'apikey'
+EMAIL_HOST_USER = os.environ.get('SMTP_USER', 'smtp.sendgrid.net')  # this is exactly the value 'apikey'
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', 'SENDGRID_API_KEY')
-# EMAIL_PORT = os.environ.get(587, 587)D\
-EMAIL_PORT = 587
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
 EMAIL_USE_TLS = True
 
 # SMS Settings
@@ -318,16 +317,8 @@ CHANNEL_LAYERS = {
 CELERY_BEAT_SCHEDULE = {
     "fetch_feeds_update": {
         "task": "feed.tasks.scrape_new_feed_task",
-        "schedule": crontab(minute="*/2"),
+        "schedule": crontab(minute="*/20"),
     },
-    "send_fail_notification":{
-        "task": "feed.tasks.send_fail_notification",
-        "schedule": crontab(minute="*/1"),
-    }
-    # "send_email_report": {
-    #     "task": "user.tasks.send_email_report",
-    #     "schedule": crontab(hour="*/1"),
-    # },
 }
 
 SWAGGER_SETTINGS = {

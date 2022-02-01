@@ -27,9 +27,9 @@ def follow() -> Followers:
     return FollowerFactory()
 
 
-# @pytest.fixture(scope='session')
-# def scrape_feed_items() -> tuple:
-#     return scrape_feed('http://www.nu.nl/rss/Algemeen')
+@pytest.fixture(scope='class')
+def scrape_feed_items() -> tuple:
+    return scrape_feed('http://www.nu.nl/rss/Algemeen')
 
 
 @pytest.fixture(scope='session')

@@ -3,9 +3,8 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+
 # Create your models here.
-
-
 
 class Base(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -35,12 +34,12 @@ class Feed(Base):
 
 
 class Item(Base):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     description = models.TextField(null=True, blank=True)
     link = models.URLField()
-    author = models.CharField(max_length=25, null=True, blank=True)
+    author = models.CharField(max_length=50, null=True, blank=True)
     guid = models.CharField(max_length=255, null=True, blank=True)
-    category = models.CharField(max_length=50, null=True, blank=True)
+    category = models.CharField(max_length=255, null=True, blank=True)
     comments_url = models.URLField(null=True, blank=True)
     published_at = models.DateTimeField()
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE, related_name="feed_items")
