@@ -45,7 +45,3 @@ def celery_config():
 def api_client():
     return APIClient
 
-
-@pytest.fixture(scope='session')
-def api_rf():
-    return APIRequestFactory
