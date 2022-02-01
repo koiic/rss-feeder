@@ -35,7 +35,7 @@ TOKEN_TYPE = (
 
 
 def default_role():
-    return ['REGULAR']
+    return 'REGULAR'
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -47,8 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     lastname = models.CharField(max_length=255, blank=True, null=True)
     image = models.FileField(upload_to='users/', blank=True, null=True)
     phone = models.CharField(max_length=17, blank=True, null=True)
-    roles = ArrayField(models.CharField(max_length=20, blank=True,
-                                        choices=USER_ROLE), default=default_role, size=4)
+    roles = models.CharField(max_length=20, blank=True, choices=USER_ROLE, default=default_role)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     last_login = models.DateTimeField(null=True)

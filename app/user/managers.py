@@ -34,6 +34,6 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
         user = self.create_user(email, password, **extra_fields)
-        user.roles = ['ADMIN', 'SUPERADMIN']
+        user.roles = 'ADMIN'
         user.save()
         return user

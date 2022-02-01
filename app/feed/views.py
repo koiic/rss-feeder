@@ -55,6 +55,7 @@ class FeedViewsets(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # scrape feed info
         try:
+            print(request.data['link'], "++++")
             feed_, items = scrape_feed(request.data['link'])  # scrape the feed and items
             feed_['registered_by'] = request.user
             feed_['name'] = request.data['name']

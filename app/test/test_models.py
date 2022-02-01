@@ -1,46 +1,31 @@
-import datetime
-
-import faker
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 # Create your tests here.
 import pytest
 
-from user.models import User
-from feed.models import Feed
+from feed.models import Feed, Item
+
+User = get_user_model()
 
 
-class FeedTestCase(TestCase):
-    def setUp(self):
-        user = User.objects.create_user('lennon@thebeatles.com', 'johnpassword')
-        Feed.objects.create({
-            "title": "Nu-Algomeen",
-            "description": "New dily rss feed",
-            "link": "",
-            "registered_by": user,
-            "last_build_date": datetime.datetime.now(),
-            "ttl": 60,
-            "name": "test_feed"
-        })
+@pytest.mark.django_db(True)
+def test_user_create(user):
+    exist_user = User.objects.all()
+    assert exist_user.count() == 1
+    assert exist_user.filter(email=user.email)
 
-    def test_feed_is_registered(self):
-        """Animals that can speak are correctly identified"""
-        user = User.objects.get(email="lennon@thebeatles.com")
-        feed = Feed.objects.get(name="test_feed")
-        self.assertEqual(feed.name, 'test_feed')
-        self.assertEqual(feed.title, 'Nu-Algomeen')
 
-# @pytest.mark.django_db
-# def test_feed_create():
-#     user = User.objects.create_user('lennon@thebeatles.com', 'johnpassword')
-#     Feed.objects.create({
-#         "title": "Nu-Algomeen",
-#         "description": "New dily rss feed",
-#         "link": "",
-#         "registered_by": user,
-#         "last_build_date": datetime.datetime.now(),
-#         "ttl": 60,
-#         "name": "test_feed"
-#     })
-#
-#     assert Feed.objects.count() == 1
+@pytest.mark.django_db(True)
+def test_feed_create(feed):
+    exist_feed = Feed.objects.all()
+    assert exist_feed.count() == 1
+    assert exist_feed.filter(name__exact=feed.name)
+
+
+@pytest.mark.django_db(True)
+def test_item_exist(item, feed):
+    assert Item.objects.count() == 1
+    assert Item.objects.filter(title=item.title).exists()
+
+

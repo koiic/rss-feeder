@@ -6,6 +6,7 @@ from user.serializers import ListUserSerializer, UserFollowerSerializer
 
 class FeedSerializer(serializers.ModelSerializer):
     follower_count = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Feed
         fields = '__all__'
@@ -44,9 +45,3 @@ class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Followers
         exclude = ('feed',)
-
-
-class RegisterFeedSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feed
-        fields = ("link", "name")

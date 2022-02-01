@@ -7,7 +7,7 @@ class IsSuperAdmin(permissions.BasePermission):
     message = "Only Super Admins are authorized to perform this action."
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.roles and 'SUPERADMIN' in request.user.roles)
+        return bool(request.user and request.user.roles and request.user.roles == 'SUPERADMIN')
 
 
 class IsAdmin(permissions.BasePermission):
@@ -15,7 +15,7 @@ class IsAdmin(permissions.BasePermission):
     message = "Only Admins are authorized to perform this action."
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.roles and 'ADMIN' in request.user.roles)
+        return bool(request.user and request.user.roles and request.user.roles == 'ADMIN')
 
 
 class IsRegularUser(permissions.BasePermission):
@@ -23,4 +23,4 @@ class IsRegularUser(permissions.BasePermission):
     message = "Only Regular users are authorized to perform this action."
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.roles and 'REGULAR' in request.user.roles)
+        return bool(request.user and request.user.roles and  request.user.roles == 'REGULAR')

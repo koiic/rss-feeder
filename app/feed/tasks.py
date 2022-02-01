@@ -11,16 +11,19 @@ from user.utils import send_email
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def scrape_new_feed():
+@shared_task(bind=True)
+def scrape_new_feed_task(self):
     """
-    scrape new feeds item
-    task is run in background asynchronously
+    scrape new feeds item.
+    task will run in background asynchronously
     """
+    print("i got here now ....")
     current_feed = None
     try:
         feeds = Feed.objects.all()
+
         for feed in feeds:
+            print(feed, "++++>>><><><><><><>")
             feed_, items, updated = ping_for_feed(feed)  # ping for updates
             if updated:
                 current_feed = feed
@@ -32,21 +35,28 @@ def scrape_new_feed():
         logger.exception(e)
         try:
             logger.info(f"retrying cause of exception")
-            scrape_new_feed.retry(
+            self.retry(
                 exc=e, countdown=2 * 60, max_retries=4, retry_backoff=True, retry_backoff_max=10 * 60, retry_jitter=True
             )
         except MaxRetriesExceededError:
             # send notification to user
-            send_fail_notification({
-                "email": current_feed.registered_by.email,
-                "fullname": current_feed.registered_by.firstname,
-                "link": current_feed.link,
-            })
+            # send__notification({
+            #     "email": current_feed.registered_by.email,
+            #     "fullname": current_feed.registered_by.firstname,
+            #     "link": current_feed.link,
+            # })
             logger.exception(e)
             raise Exception(str(e))
 
-
-def send_fail_notification(email_data):
+@shared_task
+def send_fail_notification(email_data=None):
+    if email_data is None:
+        email_data = {
+            "email": "calory@gmail.com",
+            "fullname": "Imail Ibrahim",
+            "link": "current_feed.link",
+            "title": "current_feed.link",
+        }
     html_template = get_template('emails/failed_feeds_update.html')
     text_template = get_template('emails/failed_feeds_update.txt')
     html_alternative = html_template.render(email_data)
