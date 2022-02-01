@@ -13,11 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Push to server and deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEV_HOST }}
-          USERNAME: ${{ secrets.DEV_USERNAME }}
-          PORT: ${{ secrets.PORT }}
-          KEY: ${{ secrets.DEV_SSHKEY }}
-          script: cd ${{ secrets.DEV_PATH }} && ls && git pull && docker-compose up --build -d
+          # Move into the Django project folder (./app) and run pytest
+      - name: Test with pytest
+        working-directory: ./app
+        run: pytest -vv
