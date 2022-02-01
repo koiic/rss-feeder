@@ -1,11 +1,7 @@
 
 
 
-#               Build Status
-[![Build Status](https://travis-ci.com/koiic/Shopmate-Turing.svg?token=Q32jG2NqTmqEXpyGpEP1&branch=master)](https://travis-ci.com/koiic/Shopmate-Turing)
-
 #                   RSSFEED
----
 ###### `An RSS scraper application which saves RSS feeds to a database and lets a user view and manage feeds they’ve added to the system`
 
  #                  Getting Started
@@ -30,7 +26,7 @@ docker-compose up
 ```
 ##        Test
 ```
-pytest
+cd app and run pytest
 ```
 
 ##        Production
