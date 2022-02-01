@@ -4,7 +4,7 @@ from django.test import TestCase
 # Create your tests here.
 import pytest
 
-from feed.models import Feed, Item
+from feed.models import Feed, Item, Followers
 
 User = get_user_model()
 
@@ -27,5 +27,3 @@ def test_feed_create(feed):
 def test_item_exist(item, feed):
     assert Item.objects.count() == 1
     assert Item.objects.filter(title=item.title).exists()
-
-

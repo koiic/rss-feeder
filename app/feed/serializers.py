@@ -6,6 +6,7 @@ from user.serializers import ListUserSerializer, UserFollowerSerializer
 
 class FeedSerializer(serializers.ModelSerializer):
     follower_count = serializers.SerializerMethodField(read_only=True)
+    owner = serializers.CharField(source='registered_by.fullname', read_only=True)
 
     class Meta:
         model = Feed

@@ -20,11 +20,11 @@ def scrape_new_feed_task(self):
     A task to scrape feed items for all feeds in background asynchronously
     """
     for id_ in Feed.objects.values_list('pk'):
-        scrape_single_user_field.apply_async(id_)
+        scrape_single_user_feed_update.apply_async(id_)
 
 
 @shared_task(bind=True)
-def scrape_single_user_field(self, feed_id):
+def scrape_single_user_feed_update(self, feed_id):
     """
 
     Args:
@@ -35,7 +35,7 @@ def scrape_single_user_field(self, feed_id):
         void () : call the function to update all items for feeds
 
     """
-    feed = Feed.objects.filter(pk=UUID(feed_id)).first()
+    feed = Feed.objects.filter(pk=feed_id).first()
     try:
         feed_, items, updated = ping_for_feed(feed)  # ping for updates
         if updated:
@@ -58,7 +58,7 @@ def scrape_single_user_field(self, feed_id):
         else:
             logger.info(f"retrying cause of exception")
             self.retry(
-                exc=exc, countdown=15, max_retries=2, retry_backoff=True, retry_backoff_max=10 * 60, retry_jitter=False
+                exc=exc, countdown=20, max_retries=2, retry_backoff=True, retry_backoff_max=10 * 60, retry_jitter=True
             )
         raise_with_context(exc)
 

@@ -70,6 +70,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.last_login = datetime.now()
         self.save()
 
+    @property
+    def fullname(self):
+        return f"{self.firstname} {self.lastname}"
+
 
 class Token(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

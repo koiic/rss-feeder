@@ -29,6 +29,7 @@ class AuthViewsets(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'last_login',
                        'email', 'firstname', 'lastname', 'phone']
 
+
     def get_serializer_class(self):
         if self.action in ['create']:
             return CreateUserSerializer
