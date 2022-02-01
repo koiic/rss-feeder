@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r ./app/requirements/dev.txt
 
       # Move into the Django project folder (./app) and run pytest
       - name: Test with pytest
