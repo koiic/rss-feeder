@@ -24,10 +24,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r ./app/requirements/dev.txt
-          python manage.py makemigrations --no-input
-          python manage.py migrate --no-input
+
 
       # Move into the Django project folder (./app) and run pytest
       - name: Test with pytest
         working-directory: ./app
-        run: pytest -vv
+        run: |
+          python manage.py makemigrations --no-input
+          python manage.py migrate --no-input
+          pytest -vv
