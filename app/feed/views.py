@@ -1,6 +1,4 @@
 from django.db.models import F, Q
-from django.shortcuts import render
-
 # Create your views here.
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status
@@ -11,8 +9,7 @@ from sentry_sdk import capture_exception
 
 from core.messages import messages
 from core.pagination import CustomPagination
-from feed.filters import FeedFilters, ItemFilters
-from feed.models import Feed, Item, Followers, Activity, Read
+from feed.models import Feed, Item, Followers, Read
 from feed.serializers import FeedSerializer, ItemSerializer, FollowerSerializer
 from feed.utils import scrape_feed, ping_for_feed, update_new_feed
 
@@ -44,7 +41,7 @@ class FeedViewsets(viewsets.ModelViewSet):
         override default create on viewset
         register a new feed and scrape the feed items
         Args:
-            request ():  reuest object
+            request ():  request object
             *args (): any
             **kwargs (): any
 

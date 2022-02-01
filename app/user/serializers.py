@@ -43,6 +43,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
                 attrs['email'] = valid.email
                 return super().validate(attrs)
             except EmailNotValidError as e:
+                print(e)
                 raise serializers.ValidationError(e)
         return super().validate(attrs)
 

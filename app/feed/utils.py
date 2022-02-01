@@ -1,4 +1,3 @@
-from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -22,8 +21,11 @@ def scrape_feed(feed_url):
     item_list = []
     try:
         # start the scraping tool
+
         r = requests.get(feed_url)
+
         soup = BeautifulSoup(r.content, features='xml')
+
         # get feed information
         feed = {
             "title": soup.title.text,
@@ -83,7 +85,7 @@ def ping_for_feed(feed):
 
 def update_new_feed(feed_old, feed_new, items):
     """
-    function to persit updated item to database
+    function to persist updated item to database
     Args:
         feed_old (): the feed instance
         feed_new (): the scrape feed object

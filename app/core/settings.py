@@ -255,9 +255,9 @@ SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
 EMAIL_FROM = os.environ.get('SENDER_EMAIL')
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.sendgrid.net')
-EMAIL_HOST_USER = 'apikey'  # this is exactly the value 'apikey'
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('SMTP_USER', 'smtp.sendgrid.net')  # this is exactly the value 'apikey'
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', 'SENDGRID_API_KEY')
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
 EMAIL_USE_TLS = True
 
 # SMS Settings
@@ -273,6 +273,8 @@ TOKEN_LIFESPAN = 24  # hours
 #     host=os.getenv('REDIS_HOST', 'localhost'),
 #     port=os.getenv('REDIS_PORT', '6379')
 # )
+
+"redis://localhost:6379"
 
 REDIS_URL = os.getenv('REDIS_URL', "redis://redis:6379")
 
@@ -314,13 +316,9 @@ CHANNEL_LAYERS = {
 
 CELERY_BEAT_SCHEDULE = {
     "fetch_feeds_update": {
-        "task": "feed.tasks.scrape_new_feed",
-        "schedule": crontab(minute="*/30"),
+        "task": "feed.tasks.scrape_new_feed_task",
+        "schedule": crontab(minute="*/20"),
     },
-    # "send_email_report": {
-    #     "task": "user.tasks.send_email_report",
-    #     "schedule": crontab(hour="*/1"),
-    # },
 }
 
 SWAGGER_SETTINGS = {
